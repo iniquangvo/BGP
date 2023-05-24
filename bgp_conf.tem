@@ -1,0 +1,27 @@
+# filename: bgp_conf.tem
+###############################################################
+#
+# Script Header
+# Copyright (c) 2022-2023 by Cisco Systems, Inc.
+#
+# Manifest file
+#################################################################
+
+version: 1
+name : 'BGP'
+type: easypy
+
+arguments:
+    testbed-file: bgp.yaml
+    clean-file: etc/bgp_clean.yaml
+    health-file: etc/bgp_health.yaml
+    meta: group_name=switching
+    invoke-clean: True
+    crft-devices: uut2
+    btrace-devices: uut2
+runtimes:
+    system:
+        type: system
+        ixia:
+            hltapi_version: 9.00
+command: 'pyats run job bgp_job.py'

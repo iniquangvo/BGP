@@ -1,0 +1,266 @@
+testbed:
+    name: 'morph-mpls1'
+    alias: 'morph-mpls1'
+    servers:
+        tftp:
+            server: sjc-ads-7598
+            protocol: tftp
+            address: '192.168.0.110'
+            path: ''
+            credentials:
+                default:
+                  username: root
+                  password: Pass@123
+            custom:
+                 btrace_upload_dir: /auto/tftp-javelin/ykotla/btrace/
+                 crft_upload_dir: /auto/tftp-javelin/ykotla/crft/
+    custom:
+        collection_upload_server: tftp
+devices:
+    stack3-nyq-PE1:
+        alias: uut2
+        type: c9300
+        chassis_type: stack
+        os: iosxe
+        platform: cat9k
+        model: c9300
+        custom:
+            abstraction:
+                order: [os, platform, type]
+                os: iosxe
+                platform: c9300
+                type: c9300
+        passwords:
+            enable: admin
+            tacacs: admin
+            line: admin
+        connections:
+            defaults:
+                class: unicon.Unicon
+                connections: [peer_1, peer_2, peer_3]
+            peer_1:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2053
+                member: 1
+            peer_2:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2054
+                member: 2
+            peer_3:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2055
+                member: 3
+            
+            clean:
+                pre_clean: |
+                    vrf context management
+                post_clean: |
+                     license grace-period
+    9600_P:
+        alias: uut4
+        type: c9300
+        os: iosxe
+        platform: cat9k
+        model: C9606R  
+        custom:
+            abstraction:
+                order: [os, platform, type]
+                os: iosxe
+                platform: c9300
+                type: c9300
+        passwords:
+            enable: admin
+            tacacs: admin
+            line: admin
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2064
+            clean:
+                pre_clean: |
+                    vrf context management
+                post_clean: |
+                     license grace-period
+    9404R-PE3:
+        alias: uut1
+        type: c9300
+        os: iosxe
+        platform: cat9k
+        model: c9300
+        custom:
+            abstraction:
+                order: [os, platform, type]
+                os: iosxe
+                platform: c9300
+                type: c9300
+        passwords:
+            enable: admin
+            tacacs: admin
+            line: admin
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2065
+            clean:
+                pre_clean: |
+                    vrf context management
+                post_clean: |
+                     license grace-period
+    3850-48XS-CE3:
+        alias: uut3
+        type: c9300
+        os: iosxe
+        platform: cat9k
+        model: c9300
+        custom:
+            abstraction:
+                order: [os, platform, type]
+                os: iosxe
+                platform: c9300
+                type: c9300
+        passwords:
+            enable: admin
+            tacacs: admin
+            line: admin
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 172.25.56.70
+                port: 2052
+            clean:
+                pre_clean: |
+                    vrf context management
+                post_clean: |
+                     license grace-period
+      
+    ixia:
+        type: 'ixia'
+        alias: 'ixia'
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            ixia:
+                protocol: hltapi
+                ip: 172.25.56.146
+                tcl_server: 172.25.56.146
+                ixnetwork_tcl_server: 172.25.56.81
+                reset: 1
+            
+topology:                        
+        stack3-nyq-PE1:
+                interfaces:
+                    
+                        TenGigabitEthernet1/0/37:
+                              alias: uut2_uut1_int1
+                              link: link-2
+                              type: ethernet
+                        TenGigabitEthernet1/0/38:
+                              alias: uut2_uut1_int2
+                              link: link-3
+                              type: ethernet
+                        TenGigabitEthernet1/0/41:
+                              alias: uut2_uut3_int3
+                              link: link-4
+                              type: ethernet
+                        TenGigabitEthernet1/0/42:
+                              alias: uut2_uut3_int4
+                              link: link-5
+                              type: ethernet
+                        TwoGigabitEthernet1/0/19:
+                              alias: uut2_uut4_int5
+                              link: link-1
+                              type: ethernet
+                        
+        9600_P:
+                interfaces:
+                        TwentyFiveGigE2/0/19:
+                              alias: uut4_uut2_int5
+                              link: link-1
+                              type: ethernet
+        9404R-PE3:
+                interfaces:
+                        
+                        TenGigabitEthernet1/0/37:
+                              alias: uut1_uut2_int1
+                              link: link-2
+                              type: ethernet
+                        TenGigabitEthernet1/0/38:
+                              alias: uut1_uut2_int2
+                              link: link-3
+                              type: ethernet
+                        TenGigabitEthernet1/0/33:
+                              alias: uut1_uut3_int6
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/25:
+                              alias: uut1_ixia_int6
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/34:
+                              alias: uut1_uut3_int5
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/35:
+                              alias: uut1_uut3_int9
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/36:
+                              alias: uut1_uut3_int8
+                              link: link-6
+                              type: ethernet
+                        
+        3850-48XS-CE3:
+                interfaces:
+                        TenGigabitEthernet1/0/41:
+                              alias: uut3_uut2_int3
+                              link: link-4
+                              type: ethernet
+                        TenGigabitEthernet1/0/42:
+                              alias: uut3_uut2_int4
+                              link: link-5
+                              type: ethernet
+                        TenGigabitEthernet1/0/18:
+                              alias: uut3_uut1_int6
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/13:
+                              alias: uut3_ixia_int6
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/19:
+                              alias: uut3_uut1_int5
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/20:
+                              alias: uut3_uut1_int9
+                              link: link-6
+                              type: ethernet
+                        TenGigabitEthernet1/0/21:
+                              alias: uut3_uut1_int8
+                              link: link-6
+                              type: ethernet
+                        
+                    
+        ixia:
+                interfaces:
+                        5/1:
+                            alias: ixia_uut3_int6
+                            link: link-6
+                            type: ethernet
+                        5/12:
+                            alias: ixia_uut1_int6
+                            link: link-6
+                            type: ethernet 
+
+         

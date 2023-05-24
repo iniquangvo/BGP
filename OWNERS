@@ -1,0 +1,12 @@
+# OWNERS - Code Ownership
+#
+# For information on the purpose and format of this file see:
+# https://polaris-git.cisco.com/csg/polaris/wiki/Code-Reviews
+#
+# Support Mailer: pyats-ch@cisco.com
+#
+# Copyright (c) 2022-2023 by Cisco Systems, Inc.
+# All rights reserved.
+#
+
+* @csg/devat-switching

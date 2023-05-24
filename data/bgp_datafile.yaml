@@ -1,0 +1,199 @@
+vlan_id : "1"
+mode1: "server"
+intf_Loopback_num : "Loopback1"
+remove_loopback_intf : ["Loopback1"]
+uut1_Loopback_ip_add: "11.11.11.11"
+uut2_Loopback_ip_add: "22.22.22.22"
+uut3_Loopback_ip_add: "33.33.33.33"
+uut4_Loopback_ip_add: "44.44.44.44"
+uut_vlan_id1: ["vlan20"]
+uut_vlan_id2: ["vlan30"]
+uut_vlan_id3: ["vlan40"]
+uut_vlan_id: ["20","30","40"]
+vlan1: "vlan 20"
+vlan2: "vlan20"
+mode11 : "access"
+bgp_as : ["100","300","400","200","65000","65483"]
+uut1_vlan20_ip_add : "20.20.20.1"
+uut1_vlan30_ip_add : "30.30.30.1"
+uut2_vlan20_ip_add : "20.20.20.2"
+uut2_vlan40_ip_add : "40.40.40.2"
+uut3_vlan30_ip_add : "30.30.30.3"
+uut4_vlan40_ip_add : "40.40.40.4"
+ixia_inf1_ipadd : "50.0.0.1"
+ixia_inf2_ipadd : "70.0.0.1"
+uut1_iproute: "70.0.0.0"
+uut3_iproute: "50.0.0.0"
+ipadd_ixia1: "50.0.0.2"
+ipadd_ixia2: "70.0.0.2"
+ixia1_port1: "1/5/12"
+ixia2_port2: "1/5/1"
+uut1_intf5_ipadd: "80.0.0.1"
+uut3_intf5_ipadd: "80.0.0.2"
+prefixes1 : "11.11.11.0/24"
+prefixes3 : "22.22.22.0/24"
+prefixes2 : "20.20.20.0/24"
+prefixes4 : "30.30.30.0/24"
+prefixes5 : "33.33.33.0/24"
+prefixes6 : "40.40.40.0/24"
+prefixes7 : "44.44.44.0/24"
+neighbour_check : ["20.20.20.2","30.30.30.3"]
+index1 : 1
+ebgp : "2"
+protocol: "bgp"
+uut_ip_add_intf : ["21.21.21.1","21.21.21.2","21.21.21.0"]
+loop_mask: "255.255.255.0"
+address_family : "ipv4"
+route_map1: "FOR-OUT3"
+direction1: "out"
+ratepps: "10000"
+protocol1: "ipv4"
+phy1_mode: "copper"
+src_mac_in_ixia1 : "0000.6d47.e7aa"
+src_mac_in_ixia2 : "0000.6d48.79a9"
+network_ip_add: ["11.11.11.0","20.20.20.0","30.30.30.0","22.22.22.0","33.33.33.0","40.40.40.0","44.44.44.0"]
+inf_ip_add_list : ["10.10.10.1","10.10.10.2","30.30.30.2","20.20.20.3","30.30.30.4","10.10.10.0"]
+route_map: [ { 'neighbor': '20.20.20.2', 'route_map': 'FOR-OUT1','direction': 'out'}]
+neighborname: "INTERNALPG"
+neighborname1: "EXTERNALPG"
+route_map_name11 : "INTERNAL"
+route_map_name12: "EXTERNAL"
+permit11: 10
+name1: "FOR-OUT1"
+acl_number1: "11"
+acl_number2: "22"
+permission1 : "permit"
+source_ip1 : "33.33.33.0"
+source_ip2: "30.30.30.0"
+wild_mask1 : "0.0.0.255"
+route_map3: [ { 'neighbor': '30.30.30.1', 'route_map': 'FOR-OUT3','direction': 'out'}]
+route_map4 : [{ 'seq':'10','route_map': 'FOR-OUT1'}]
+route_map16 : [{ 'seq':'20','route_map': 'FOR-OUT1'}]
+route_map5 : [{ 'seq':'10','route_map': 'FOR-OUT3'}]
+route_map6: [ { 'neighbor': '20.20.20.2', 'route_map': 'FOR-IN1','direction': 'in'}]
+route_map7 : [{ 'seq':'10','route_map': 'FOR-IN1'}]
+route_map8: [ { 'neighbor': '30.30.30.3', 'route_map': 'FOR-OUT1','direction': 'out'}]
+route_map9 : [{ 'seq':'10','route_map': 'FOR-OUT1'}]
+route_map10: [ { 'neighbor': '30.30.30.3', 'route_map': 'FOR-IN2','direction': 'in'}]
+route_map11 : [{ 'seq':'10','route_map': 'FOR-IN2'}]
+route_map2: [{'neighbor': 'INTERNALPG',
+            'route_map': 'INTERNAL',
+            'direction': 'out'}]
+route_map14: [{'neighbor': 'EXTERNALPG',
+            'route_map': 'EXTERNAL',
+            'direction': 'out'}]
+route_map13: [{'seq':'10','route_map': 'INTERNAL'}]
+route_map15: [{'seq':'10','route_map': 'EXTERNAL'}]
+routemap: "route-map FOR-IN1"
+routemap1: "route-map FOR-OUT1"
+route: "11.11.11.0"
+system1 : 100
+system2 : 200
+system3 : 300
+system4 : 400
+ospf_process_id: "1"
+ospf_mask: "0.0.0.255"
+area: "0"
+ospf_ipadd : ["11.11.11.0","20.20.20.0"]
+ospf_ipadd1 : ["22.22.22.0","20.20.20.0"]
+acl_name : "11"
+acl_direction: "in"
+acl_number: "11"
+permission: "permit"
+permission15: "deny"
+source_ip: "any"
+mode: "on"
+channel_group: "1"
+reload: True
+sso: True
+intf_Loopback_num0 : "Loopback0"
+remove_loopback_intf0 : ["Loopback0"]
+intf_Loopback_num50: "Loopback50"
+remove_loopback_intf50 : ["Loopback50"]
+loopback0_ipadd1: "192.168.108.67"
+loopback0_ipadd2: "192.168.108.68"
+loopback0_mask: "255.255.255.255"
+vlanid_start: 2
+vlanid_end: 4094
+uut_vlan_id0: ["100","200","905","31","32","33"]
+uut_vlan_id01: ["vlan100"]
+uut_vlan_id02: ["vlan200"]
+uut_vlan_id03: ["vlan905"]
+uut1_vlan_31_id: ["vlan31"]
+uut1_vlan_32_id: ["vlan32"]
+uut1_vlan_33_id: ["vlan33"]
+ip_add_100: "15.15.15.254"
+ip_add_200: "20.20.20.254"
+ip_add1_905: "172.17.36.165"
+ip_add2_905: "172.17.36.166"
+mask_905: "255.255.255.252"
+vlan_id1: 905
+ip_add: "15.15.15.0"
+aging_time: 30
+vlan_range: "905"
+uut1_loop_add: "1.1.1.1"
+uut2_loop_add: "2.2.2.2"
+uut3_loop_add: "3.3.3.3"
+uut4_loop_add: "4.4.4.4"
+uut1_vlan31_add: "31.31.31.1"
+uut1_vlan32_add: "32.32.32.1"
+uut1_vlan33_add: "33.33.33.1"
+uut3_vlan31_add: "31.31.31.3"
+uut3_vlan32_add: "32.32.32.3"
+uut3_vlan33_add: "33.33.33.3"
+protocol2: "ipv6"
+ixia_intf_ipv6_add1: "1001:1001:1001:1001::2"
+ixia_intf_ipv6_add2: "1221:1001:1001:1001::2"
+gateway_uut1_ipv6: "1001:1001:1001:1001::1"
+gateway_uut2_ipv6: "1221:1001:1001:1001::1"
+uut1_ipv6_add_intf1: "1111:1001:1001:1001::1/64"
+uut1_ipv6_add_intf2: "1001:1001:1001:1001::1/64"
+uut2_ipv6_add_intf1: "1111:1001:1001:1001::2/64"
+uut2_ipv6_add_intf2: "1221:1001:1001:1001::1/64"
+uut1_ipv6_add_l3_svi: "1111:1001:1001:1001::1"
+uut2_ipv6_add_l3_svi: "1111:1001:1001:1001::2"
+ipv6_route_add1: "1221:1001:1001:1001::0/64"
+ipv6_route_add2: "1001:1001:1001:1001::0/64"
+ipadd1: ["1.1.1.0","31.31.31.0","32.32.32.0","33.33.33.0","2.2.2.0","3.3.3.0","4.4.4.0","40.40.40.3"]
+system: 100
+paths: 3
+bgp_as4: [{'bgp_as': '100' ,'damping_id': '3'}]
+frame_size: "1024"
+arp_req: 1
+speed_autonegotiation: "ether1000"
+integrity_signature: "34 34 34 34"
+integrity_signature_offset: 86
+ipv6_prefix_length: 64
+max_success_rate: 100
+min_success_rate: 1
+maximum_time: 10
+interface: 'GigabitEthernet0/0'
+vrf: 'Mgmt-vrf'
+Ip_address: "192.168.0.111"
+IP_Subnet_Mask: "255.255.255.0"
+TFTP_IP: "192.168.0.110"
+testcases:
+    CommonSetup:
+        uid: CommonSetup
+    TC_01_to_verify_sync_between_bgp_andg_igp:
+        uid: TC_01_to_verify_sync_between_bgp_andg_igp
+    TC_02_Verfiy_EBGP_Neighbour_by_configuring_neighbor_commands:
+        uid: TC_02_Verfiy_EBGP_Neighbour_by_configuring_neighbor_commands
+    TC_03_verify_devices_with_multihop_configs:
+        uid: TC_03_verify_devices_with_multihop_configs
+    TC_04_verify_load_balance_two_EBGP_over_paralle_lines:
+        uid: TC_04_verify_load_balance_two_EBGP_over_paralle_lines
+    TC_05_verify_removed_network_dropped_from_BGP:
+        uid: TC_05_verify_removed_network_dropped_from_BGP
+    TC_06_new_Ebgp_routes_added_to_BGP_Table:
+        uid: TC_06_new_Ebgp_routes_added_to_BGP_Table
+    TC_07_Verify_bgp_updates_send_out_using_route_map:
+        uid: TC_07_Verify_bgp_updates_send_out_using_route_map
+    TC_08_Verify_bgp_updates_from_inbound_bgp_filter_using_route_maps:
+        uid: TC_08_Verify_bgp_updates_from_inbound_bgp_filter_using_route_maps
+    TC_10_To_verify_L3_orwarding_behavior_routes_learnt_from_adjacent_router:
+        uid: TC_10_To_verify_L3_orwarding_behavior_routes_learnt_from_adjacent_router
+    TC_17_To_verify_EBGP_load_balancing_with_maximum_paths:
+        uid: TC_17_To_verify_EBGP_load_balancing_with_maximum_paths
+    CommonCleanup:
+        uid: CommonCleanup

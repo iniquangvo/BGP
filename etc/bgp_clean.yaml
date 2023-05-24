@@ -1,0 +1,322 @@
+cleaners:
+  DeviceClean:
+    module: genie.libs.clean
+    devices: [uut1,uut2,uut3,uut4] # List of devices that are to be cleaned. 'platforms' or
+                   # 'groups' can also be used instead to define cleaning for
+                   # all devices that match that criteria
+
+devices: # Clean information specific to each device, since we are specifying
+         # devices individually.
+
+  uut1: # uut from device alias
+
+    #device_recovery: # If something goes very wrong with the clean, this
+    #                # describes how to recover the device with a golden image.
+    #  break_count: 10
+    #  console_activity_pattern: "\\.\\.\\.\\."
+    #  timeout: 1200
+    #  recovery_password: lab^
+    #  golden_image:
+    #    - flash:/cat9k_lite_iosxe.BLD_POLARIS_DEV_LATEST_20210816_125118.SSA.bin # Golden image on device to recover to
+
+    connect:
+
+    #ping_server:
+    #  server: bgl-ads-1580 # Name from definition in testbed.yaml
+    #  max_attempts: 1
+
+    #copy_to_linux:
+    #  destination:
+    #    directory: /auto/tftptest-blr/latest/ # Path to copy image to on FTP
+                                             # server
+
+    #copy_to_device:
+    #  origin:
+    #    files:
+    #      - /auto/tftptest-blr/latest/rameperu/cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #    hostname: '202.153.144.25'
+    #  destination:
+    #    directory: 'flash:' # Location for new image on device
+    #  protocol: tftp # Also support scp, ftp
+    #  check_file_stability: True
+    #  min_free_space_percent: 50
+    #  timeout: 900
+    #  overwrite: True
+
+    #change_boot_variable:
+    #  images:
+      #  - flash:cat9k_iosxe.BLD_V179_THROTTLE_LATEST_20220427_033137.SSA.bin
+    #write_erase: # clear NVRAM
+
+    #reload:
+    #    reload_service_args:
+    #        timeout: 1200
+    #    check_modules:
+    #        check: False
+
+    #apply_configuration:
+    #  # Configuration for device to see FTP server, and set hostname back to
+    #  # expected value. Required for future cleaning.
+    #  configuration: |
+    #        hostname 9300CR2_Sw2
+    #        vrf definition Mgmt-vrf
+    #        address-family ipv4
+    #        exit-address-family
+    #        ip routing
+    #        ip multicast-routing
+    #        ipv6 unicast-routing
+    #        ipv6 multicast-routing
+    #        interface GigabitEthernet0/0
+    #        vrf forwarding Mgmt-vrf
+    #        ip address 11.28.0.112 255.255.0.0
+    #        no shut
+    #        ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 11.28.0.1
+    #        ip tftp source-interface gigabitEthernet 0/0
+
+    verify_running_image:
+      images:
+        - bootflash:cat9k-rpboot.BLD_V1710_THROTTLE_LATEST_20220925_071952.SSA.pkg
+        # - flash:cat9k_iosxe.BLD_V179_THROTTLE_LATEST_20220427_033137.SSA.bin
+        
+
+    order: # copy_to_linux is commented out since we are assuming the image is
+           # available on the FTP server
+      - 'connect'
+      #- 'write_erase'
+      #- 'reload'
+      #- 'apply_configuration'
+      - 'verify_running_image'
+  
+  uut2: # uut from device alias
+
+    #device_recovery: # If something goes very wrong with the clean, this
+    #                # describes how to recover the device with a golden image.
+    #  break_count: 10
+    #  console_activity_pattern: "\\.\\.\\.\\."
+    #  timeout: 1200
+    #  recovery_password: lab^
+    #  golden_image:
+    #    - flash:/cat9k_lite_iosxe.BLD_POLARIS_DEV_LATEST_20210816_125118.SSA.bin # Golden image on device to recover to
+
+    connect:
+
+    #ping_server:
+    #  server: bgl-ads-1580 # Name from definition in testbed.yaml
+    #  max_attempts: 1
+
+    #copy_to_linux:
+    #  destination:
+    #    directory: /auto/tftptest-blr/latest/ # Path to copy image to on FTP
+                                             # server
+
+    #copy_to_device:
+    #  origin:
+    #    files:
+    #      - /auto/tftptest-blr/latest/rameperu/cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #    hostname: '202.153.144.25'
+    #  destination:
+    #    directory: 'flash:' # Location for new image on device
+    #  protocol: tftp # Also support scp, ftp
+    #  check_file_stability: True
+    #  min_free_space_percent: 50
+    #  timeout: 900
+    #  overwrite: True
+
+    #change_boot_variable:
+    #  images:
+    #    - flash:cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #write_erase: # clear NVRAM
+
+    #reload:
+    #    reload_service_args:
+    #        timeout: 1200
+    #    check_modules:
+    #        check: False
+
+    #apply_configuration:
+    #  # Configuration for device to see FTP server, and set hostname back to
+    #  # expected value. Required for future cleaning.
+    #  configuration: |
+    #        hostname 9300CR2_Sw2
+    #        vrf definition Mgmt-vrf
+    #        address-family ipv4
+    #        exit-address-family
+    #        ip routing
+    #        ip multicast-routing
+    #        ipv6 unicast-routing
+    #        ipv6 multicast-routing
+    #        interface GigabitEthernet0/0
+    #        vrf forwarding Mgmt-vrf
+    #        ip address 11.28.0.112 255.255.0.0
+    #        no shut
+    #        ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 11.28.0.1
+    #        ip tftp source-interface gigabitEthernet 0/0
+
+    verify_running_image:
+      images:
+        - flash:cat9k-rpboot.BLD_POLARIS_DEV_LATEST_20220925_143658.SSA.pkg 
+
+
+    order: # copy_to_linux is commented out since we are assuming the image is
+           # available on the FTP server
+      - 'connect'
+      #- 'write_erase'
+      #- 'reload'
+      #- 'apply_configuration'
+      - 'verify_running_image'
+  uut3: # uut from device alias
+
+    #device_recovery: # If something goes very wrong with the clean, this
+    #                # describes how to recover the device with a golden image.
+    #  break_count: 10
+    #  console_activity_pattern: "\\.\\.\\.\\."
+    #  timeout: 1200
+    #  recovery_password: lab^
+    #  golden_image:
+    #    - flash:/cat9k_lite_iosxe.BLD_POLARIS_DEV_LATEST_20210816_125118.SSA.bin # Golden image on device to recover to
+
+    connect:
+
+    #ping_server:
+    #  server: bgl-ads-1580 # Name from definition in testbed.yaml
+    #  max_attempts: 1
+
+    #copy_to_linux:
+    #  destination:
+    #    directory: /auto/tftptest-blr/latest/ # Path to copy image to on FTP
+                                             # server
+
+    #copy_to_device:
+    #  origin:
+    #    files:
+    #      - /auto/tftptest-blr/latest/rameperu/cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #    hostname: '202.153.144.25'
+    #  destination:
+    #    directory: 'flash:' # Location for new image on device
+    #  protocol: tftp # Also support scp, ftp
+    #  check_file_stability: True
+    #  min_free_space_percent: 50
+    #  timeout: 900
+    #  overwrite: True
+
+    #change_boot_variable:
+    #  images:
+    #    - flash:cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #write_erase: # clear NVRAM
+
+    #reload:
+    #    reload_service_args:
+    #        timeout: 1200
+    #    check_modules:
+    #        check: False
+
+    #apply_configuration:
+    #  # Configuration for device to see FTP server, and set hostname back to
+    #  # expected value. Required for future cleaning.
+    #  configuration: |
+    #        hostname 9300CR2_Sw2
+    #        vrf definition Mgmt-vrf
+    #        address-family ipv4
+    #        exit-address-family
+    #        ip routing
+    #        ip multicast-routing
+    #        ipv6 unicast-routing
+    #        ipv6 multicast-routing
+    #        interface GigabitEthernet0/0
+    #        vrf forwarding Mgmt-vrf
+    #        ip address 11.28.0.112 255.255.0.0
+    #        no shut
+    #        ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 11.28.0.1
+    #        ip tftp source-interface gigabitEthernet 0/0
+
+    verify_running_image:
+      images:
+        - flash:packages.conf
+        # - bootflash:cat9k-rpboot.BLD_V1710_THROTTLE_LATEST_20220925_071952.SSA.pkg
+        # bootflash:cat9k-rpboot.BLD_V1710_THROTTLE_LATEST_20220925_071952.SSA.pkg
+
+    order: # copy_to_linux is commented out since we are assuming the image is
+           # available on the FTP server
+      - 'connect'
+      #- 'write_erase'
+      #- 'reload'
+      #- 'apply_configuration'
+      - 'verify_running_image'
+  uut4: # uut from device alias
+
+    #device_recovery: # If something goes very wrong with the clean, this
+    #                # describes how to recover the device with a golden image.
+    #  break_count: 10
+    #  console_activity_pattern: "\\.\\.\\.\\."
+    #  timeout: 1200
+    #  recovery_password: lab^
+    #  golden_image:
+    #    - flash:/cat9k_lite_iosxe.BLD_POLARIS_DEV_LATEST_20210816_125118.SSA.bin # Golden image on device to recover to
+
+    connect:
+
+    #ping_server:
+    #  server: bgl-ads-1580 # Name from definition in testbed.yaml
+    #  max_attempts: 1
+
+    #copy_to_linux:
+    #  destination:
+    #    directory: /auto/tftptest-blr/latest/ # Path to copy image to on FTP
+                                             # server
+
+    #copy_to_device:
+    #  origin:
+    #    files:
+    #      - /auto/tftptest-blr/latest/rameperu/cat9k_iosxe.BLD_POLARIS_DEV_LATEST_20211213_190130_V17_8_0_33.SSA.bin
+    #    hostname: '202.153.144.25'
+    #  destination:
+    #    directory: 'flash:' # Location for new image on device
+    #  protocol: tftp # Also support scp, ftp
+    #  check_file_stability: True
+    #  min_free_space_percent: 50
+    #  timeout: 900
+    #  overwrite: True
+
+    #change_boot_variable:
+    #  images:
+      #  - flash:cat9k_iosxe.BLD_V179_THROTTLE_LATEST_20220427_033137.SSA.bin
+    #write_erase: # clear NVRAM
+
+    #reload:
+    #    reload_service_args:
+    #        timeout: 1200
+    #    check_modules:
+    #        check: False
+
+    #apply_configuration:
+    #  # Configuration for device to see FTP server, and set hostname back to
+    #  # expected value. Required for future cleaning.
+    #  configuration: |
+    #        hostname 9300CR2_Sw2
+    #        vrf definition Mgmt-vrf
+    #        address-family ipv4
+    #        exit-address-family
+    #        ip routing
+    #        ip multicast-routing
+    #        ipv6 unicast-routing
+    #        ipv6 multicast-routing
+    #        interface GigabitEthernet0/0
+    #        vrf forwarding Mgmt-vrf
+    #        ip address 11.28.0.112 255.255.0.0
+    #        no shut
+    #        ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 11.28.0.1
+    #        ip tftp source-interface gigabitEthernet 0/0
+
+    verify_running_image:
+      images:
+        - bootflash:cat9k-rpboot.16.11.01.SPA.pkg
+        # - flash:cat9k_iosxe.BLD_V179_THROTTLE_LATEST_20220427_033137.SSA.bin
+        
+
+    order: # copy_to_linux is commented out since we are assuming the image is
+           # available on the FTP server
+      - 'connect'
+      #- 'write_erase'
+      #- 'reload'
+      #- 'apply_configuration'
+      - 'verify_running_image'

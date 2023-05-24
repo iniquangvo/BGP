@@ -1,0 +1,222 @@
+# testcase name should be `pyats_health_processors`
+pyats_health_processors:
+  groups: ["all"]
+  # specify pyATS Health Check class instead of Blitz one
+  source:
+    pkg: genie.libs.health
+    class: health.Health
+  test_sections:
+    # section name. this name will appear in Logviewer
+    - cpu_uut1:
+        - api:
+            device: uut1
+            # `processor` is only for pyATS Health Check. Not for Blitz
+            # Explained the detail in next section
+            processor: post
+            # `function` can be found from Genie Feature Browser
+            # Please find the link to the page from bottom of this section
+            function: health_cpu
+            health_tc_sections: common_cleanup
+            arguments:
+              processes:
+                - .*
+              add_total: true
+            include:
+              - contains('ALL_PROCESSES',level=-1).sum_value_operator('value', '<', 90)
+            save:
+              - variable_name: health_value
+                filter: contains('ALL_PROCESSES',level=-1).sum_value_operator('value',
+                  '>', 90).get_values('value',0)
+
+    - memory_uut1:
+        - api:
+            device: uut1
+            processor: post
+            function: health_memory
+            health_tc_sections: common_cleanup
+            arguments:
+              command: show processes memory
+              processes: ['\*Init\*']
+            include:
+              - sum_value_operator('value', '<', 90)
+    
+    - logging_uut1:
+        - api:
+            device: uut1
+            processor: post
+            function: health_logging
+            health_tc_sections: common_cleanup
+    
+    - core_uut1:
+        - api:
+            device: uut1
+            processor: post
+            arguments:
+              default_dir: "bootflash:/core"
+              num_of_cores: True         # return number of core files
+              decode: False               # enable to decode core
+              archive: False              # attach decode result in pyATS job archive
+            include:
+              - "== 0"
+            function: get_platform_core
+            health_tc_sections: common_cleanup
+    - cpu_uut2:
+        - api:
+            device: uut2
+            # `processor` is only for pyATS Health Check. Not for Blitz
+            # Explained the detail in next section
+            processor: post
+            # `function` can be found from Genie Feature Browser
+            # Please find the link to the page from bottom of this section
+            function: health_cpu
+            health_tc_sections: common_cleanup
+            arguments:
+              processes:
+                - .*
+              add_total: true
+            include:
+              - contains('ALL_PROCESSES',level=-1).sum_value_operator('value', '<', 90)
+            save:
+              - variable_name: health_value
+                filter: contains('ALL_PROCESSES',level=-1).sum_value_operator('value',
+                  '>', 90).get_values('value',0)
+
+    - memory_uut2:
+        - api:
+            device: uut2
+            processor: post
+            function: health_memory
+            health_tc_sections: common_cleanup
+            arguments:
+              command: show processes memory
+              processes: ['\*Init\*']
+            include:
+              - sum_value_operator('value', '<', 90)
+    
+    - logging_uut2:
+        - api:
+            device: uut2
+            processor: post
+            function: health_logging
+            health_tc_sections: common_cleanup
+    
+    - core_uut2:
+        - api:
+            device: uut2
+            processor: post
+            arguments:
+              default_dir: "bootflash:/core"
+              num_of_cores: True         # return number of core files
+              decode: False               # enable to decode core
+              archive: False              # attach decode result in pyATS job archive
+            include:
+              - "== 0"
+            function: get_platform_core
+            health_tc_sections: common_cleanup
+    - cpu_uut3:
+        - api:
+            device: uut3
+            # `processor` is only for pyATS Health Check. Not for Blitz
+            # Explained the detail in next section
+            processor: post
+            # `function` can be found from Genie Feature Browser
+            # Please find the link to the page from bottom of this section
+            function: health_cpu
+            health_tc_sections: common_cleanup
+            arguments:
+              processes:
+                - .*
+              add_total: true
+            include:
+              - contains('ALL_PROCESSES',level=-1).sum_value_operator('value', '<', 90)
+            save:
+              - variable_name: health_value
+                filter: contains('ALL_PROCESSES',level=-1).sum_value_operator('value',
+                  '>', 90).get_values('value',0)
+
+    - memory_uut3:
+        - api:
+            device: uut3
+            processor: post
+            function: health_memory
+            health_tc_sections: common_cleanup
+            arguments:
+              command: show processes memory
+              processes: ['\*Init\*']
+            include:
+              - sum_value_operator('value', '<', 90)
+    
+    - logging_uut3:
+        - api:
+            device: uut3
+            processor: post
+            function: health_logging
+            health_tc_sections: common_cleanup
+    
+    - core_uut3:
+        - api:
+            device: uut3
+            processor: post
+            arguments:
+              default_dir: "bootflash:/core"
+              num_of_cores: True         # return number of core files
+              decode: False               # enable to decode core
+              archive: False              # attach decode result in pyATS job archive
+            include:
+              - "== 0"
+            function: get_platform_core
+            health_tc_sections: common_cleanup
+    - cpu_uut4:
+        - api:
+            device: uut4
+            # `processor` is only for pyATS Health Check. Not for Blitz
+            # Explained the detail in next section
+            processor: post
+            # `function` can be found from Genie Feature Browser
+            # Please find the link to the page from bottom of this section
+            function: health_cpu
+            health_tc_sections: common_cleanup
+            arguments:
+              processes:
+                - .*
+              add_total: true
+            include:
+              - contains('ALL_PROCESSES',level=-1).sum_value_operator('value', '<', 90)
+            save:
+              - variable_name: health_value
+                filter: contains('ALL_PROCESSES',level=-1).sum_value_operator('value',
+                  '>', 90).get_values('value',0)
+
+    - memory_uut4:
+        - api:
+            device: uut4
+            processor: post
+            function: health_memory
+            health_tc_sections: common_cleanup
+            arguments:
+              command: show processes memory
+              processes: ['\*Init\*']
+            include:
+              - sum_value_operator('value', '<', 90)
+    
+    - logging_uut4:
+        - api:
+            device: uut4
+            processor: post
+            function: health_logging
+            health_tc_sections: common_cleanup
+    
+    - core_uut4:
+        - api:
+            device: uut4
+            processor: post
+            arguments:
+              default_dir: "bootflash:/core"
+              num_of_cores: True         # return number of core files
+              decode: False               # enable to decode core
+              archive: False              # attach decode result in pyATS job archive
+            include:
+              - "== 0"
+            function: get_platform_core
+            health_tc_sections: common_cleanup
+   
