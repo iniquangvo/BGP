@@ -18,7 +18,10 @@ connect_kwargs = {
     'reset': True,
     'break_locks': False,
 }
-
+traffic_stats_kwargs = {
+    'mode': 'aggregate',                    # ( all | aggregate | streams )
+    'port_handle': None,
+}
 class HLT_OK(dict):
     def __init__(self, init_dict = {}, **kwargs):
         dict.__init__(self, {'status': 1, 'log': None})
@@ -181,7 +184,78 @@ class TrexAPI(object):
 
     def traffic_stats(self, **user_kwargs):
         # TODO
-        pass
+        if not self.trex_client:
+            #return HLT_ERR('Connect first')
+            return print('Connect first')
+        kwargs = self._merge_kwargs(traffic_stats_kwargs, user_kwargs)
+        mode = kwargs['mode']
+        port_handle = kwargs['port_handle']
+        if type(port_handle) is not list:
+            port_handle = [port_handle]
+        ALLOWED_MODES = ['aggregate', 'streams', 'all']
+        if mode not in ALLOWED_MODES:
+            return print("'mode' must be one of the following values: %s" % ALLOWED_MODES)
+        hlt_stats_dict = dict([(port, {}) for port in port_handle])
+        ports_speed = {}
+        for port_id in port_handle:
+            ports_speed[port_id] = self.trex_client.ports[port_id].get_speed_bps()
+
+        try:
+            stats = self.trex_client.get_stats(port_handle)
+            if mode in ('all', 'aggregate'):
+                for port_id in port_handle:
+                    port_stats = stats[port_id]
+                    if port_id.is_integer():
+                        hlt_stats_dict[port_id]['aggregate'] = {
+                                'tx': {
+                                    'pkt_bit_rate':    port_stats.get('tx_bps', 0),
+                                    'pkt_byte_count':  port_stats.get('obytes', 0),
+                                    'pkt_count':       port_stats.get('opackets', 0),
+                                    'pkt_rate':        port_stats.get('tx_pps', 0),
+                                    'total_pkt_bytes': port_stats.get('obytes', 0),
+                                    'total_pkt_rate':  port_stats.get('tx_pps', 0),
+                                    'total_pkts':      port_stats.get('opackets', 0),
+                                    },
+                                'rx': {
+                                    'pkt_bit_rate':    port_stats.get('rx_bps', 0),
+                                    'pkt_byte_count':  port_stats.get('ibytes', 0),
+                                    'pkt_count':       port_stats.get('ipackets', 0),
+                                    'pkt_rate':        port_stats.get('rx_pps', 0),
+                                    'total_pkt_bytes': port_stats.get('ibytes', 0),
+                                    'total_pkt_rate':  port_stats.get('rx_pps', 0),
+                                    'total_pkts':      port_stats.get('ipackets', 0),
+                                    }
+                                }
+            if mode in ('all', 'streams'):
+                for pg_id, pg_stats in stats['flow_stats'].items():
+                    try:
+                        pg_id = int(pg_id)
+                    except:
+                        continue
+                    for port_id in port_handle:
+                        if 'stream' not in hlt_stats_dict[port_id]:
+                            hlt_stats_dict[port_id]['stream'] = {}
+                        hlt_stats_dict[port_id]['stream'][pg_id] = {
+                                'tx': {
+                                    'total_pkts':           pg_stats['tx_pkts'].get(port_id, 0),
+                                    'total_pkt_bytes':      pg_stats['tx_bytes'].get(port_id, 0),
+                                    'total_pkts_bytes':     pg_stats['tx_bytes'].get(port_id, 0),
+                                    'total_pkt_bit_rate':   pg_stats['tx_bps'].get(port_id, 0),
+                                    'total_pkt_rate':       pg_stats['tx_pps'].get(port_id, 0),
+                                    'line_rate_percentage': pg_stats['tx_bps_l1'].get(port_id, 0) * 100.0 / ports_speed[port_id] if ports_speed[port_id] else 0,
+                                    },
+                                'rx': {
+                                    'total_pkts':           pg_stats['rx_pkts'].get(port_id, 0),
+                                    'total_pkt_bytes':      pg_stats['rx_bytes'].get(port_id, 0),
+                                    'total_pkts_bytes':     pg_stats['rx_bytes'].get(port_id, 0),
+                                    'total_pkt_bit_rate':   pg_stats['rx_bps'].get(port_id, 0),
+                                    'total_pkt_rate':       pg_stats['rx_pps'].get(port_id, 0),
+                                    'line_rate_percentage': pg_stats['rx_bps_l1'].get(port_id, 0) * 100.0 / ports_speed[port_id] if ports_speed[port_id] else 0,
+                                    },
+                                }
+        except Exception as e:
+            return print('Could not retrieve stats: %s' % (e))
+        return HLT_OK(hlt_stats_dict)
 
     # timeout = maximal time to wait
     def wait_on_traffic(self, port_handle = None, timeout = None):
