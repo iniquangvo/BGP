@@ -1,266 +1,114 @@
-import copy
-import socket
+import logging
+import time
 
-from trex.stl.trex_stl_client import *
+from pyats.log.utils import banner
 
-traffic_control_kwargs = {
-    'action': None,                         # (clear_stats | run | stop)
-    'port_handle': None,
-}
+from trex.stl.trex_stl_hltapi import *
 
-connect_kwargs = {
-    'device': 'localhost',                  # ip or hostname of TRex
-    'trex_rpc_port': None,                  # TRex extention: RPC port of TRex server (for several TRexes under same OS)
-    'trex_pub_port': None,                  # TRex extention: Publisher port of TRex server (for several TRexes under same OS)
-    'trex_timeout_sec': None,               # TRex extention: Timeout of rpc/pub connections
-    'port_list': None,                      # list of ports
-    'username': 'TRexUser',
-    'reset': True,
-    'break_locks': False,
-}
-traffic_stats_kwargs = {
-    'mode': 'aggregate',                    # ( all | aggregate | streams )
-    'port_handle': None,
-}
-class HLT_OK(dict):
-    def __init__(self, init_dict = {}, **kwargs):
-        dict.__init__(self, {'status': 1, 'log': None})
-        dict.update(self, init_dict)
-        dict.update(self, kwargs)
-
-class TrexAPI(object):
+class TrexAPIWrapper(object):
 
     def __init__(self, verbose = "error"):
-        self.trex_client = None
-        self.verbose = verbose
-        self._last_pg_id = 0                # pg_id acts as stream_handle
-        self._streams_history = {}          # streams in format of HLT arguments for modify later
-        self._native_handle_by_pg_id = {}   # pg_id -> native handle + port
-        self._pg_id_by_id = {}              # stream_id -> pg_id
-        self._pg_id_by_name = {}            # name -> pg_id
-
-    def _merge_kwargs(default_kwargs, user_kwargs):
-        kwargs = copy.deepcopy(default_kwargs)
-        for key, value in user_kwargs.items():
-            if key in kwargs:
-                kwargs[key] = value
-            elif key in ('save_to_yaml', 'save_to_pcap', 'pg_id'): # internal arguments
-                kwargs[key] = value
-            else:
-                print("Warning: provided parameter '%s' is not supported" % key)
-        return kwargs
+        self._htl = CTRexHltApi(verbose=verbose)
 
     def connect(self, **user_kwargs):
-        # Not finished implemented yet
-        kwargs = self._merge_kwargs(connect_kwargs, user_kwargs)
-        device = kwargs['device']
-        try:
-            device = socket.gethostbyname(device) # work with ip
-        except: # give it another try
-            try:
-                device = socket.gethostbyname(device)
-            except Exception as e:
-                return print('Could not translate hostname "%s" to IP: %s' % (device, e))
-
-        try:
-            zmq_ports = {}
-            if kwargs['trex_rpc_port']:
-                zmq_ports['sync_port'] = kwargs['trex_rpc_port']
-            if kwargs['trex_pub_port']:
-                zmq_ports['async_port'] = kwargs['trex_pub_port']
-            self.trex_client = STLClient(kwargs['username'], device, verbose_level = self.verbose, **zmq_ports)
-            if kwargs['trex_timeout_sec'] is not None:
-                self.trex_client.set_timeout(kwargs['trex_timeout_sec'])
-        except Exception as e:
-            return print('Could not init stateless client %s: %s' % (device, e))
-
-        try:
-            self.trex_client.connect()
-        except Exception as e:
-            self.trex_client = None
-            return print('Could not connect to device %s: %s' % (device, e))
-
-        # connection successfully created with server, try acquiring ports of TRex
-        try:
-            port_list = self._parse_port_list(kwargs['port_list'])
-            self.trex_client.acquire(ports = port_list, force = kwargs['break_locks'])
-            for port in port_list:
-                self._native_handle_by_pg_id[port] = {}
-        except Exception as e:
-            self.trex_client = None
-            return print('Could not acquire ports %s: %s' % (port_list, e))
-
-        # arrived here, all desired ports were successfully acquired
-        if kwargs['reset']:
-            # remove all port traffic configuration from TRex
-            try:
-                self.trex_client.stop(ports = port_list)
-                self.trex_client.reset(ports = port_list)
-            except Exception as e:
-                self.trex_client = None
-                return print('Error in reset traffic: %s' % e)
-
-        # self._streams_history = CStreamsPerPort(hlt_history = True)
-        return print(port_handle = dict([(port_id, port_id) for port_id in port_list]))
-        kwargs = merge_kwargs(cleanup_session_kwargs, user_kwargs)
-        if not kwargs['maintain_lock']:
-            # release taken ports
-            port_list = kwargs['port_list'] or kwargs['port_handle'] or 'all'
-            try:
-                if port_list == 'all':
-                    port_list = self.trex_client.get_acquired_ports()
-                else:
-                    port_list = self._parse_port_list(port_list)
-            except Exception as e:
-                return HLT_ERR('Unable to determine which ports to release: %s' % format_error(e))
-            try:
-                self.trex_client.stop(port_list)
-            except Exception as e:
-                return HLT_ERR('Unable to stop traffic %s: %s' % (port_list, format_error(e)))
-            try:
-                self.trex_client.remove_all_streams(port_list)
-            except Exception as e:
-                return HLT_ERR('Unable to remove all streams %s: %s' % (port_list, format_error(e)))
-            try:
-                self.trex_client.release(port_list)
-            except Exception as e:
-                return HLT_ERR('Unable to release ports %s: %s' % (port_list, format_error(e)))
-        try:
-            self.trex_client.disconnect(stop_traffic = False, release_ports = False)
-        except Exception as e:
-            return HLT_ERR('Error disconnecting: %s' % e)
-        self.trex_client = None
-        return HLT_OK()
-
-    def interface_config(self, port_handle, mode='config'):
-        # TODO
-        if not self.trex_client:
-            return print('Connect first')
-        ALLOWED_MODES = ['config', 'modify', 'destroy']
-        if mode not in ALLOWED_MODES:
-            return print('Mode must be one of the following values: %s' % ALLOWED_MODES)
-        # pass this function for now...
-        return print('interface_config not implemented yet')
-
-
-###########################
-#    Traffic functions    #
-###########################
+        return self._htl.connect(**user_kwargs)
 
     def traffic_control(self, **user_kwargs):
-        if not self.trex_client:
-            return print('Connect first')
-        kwargs = self._merge_kwargs(traffic_control_kwargs, user_kwargs)
-        action = kwargs['action']
-        port_handle = kwargs['port_handle']
-        ALLOWED_ACTIONS = ['clear_stats', 'run', 'stop', 'sync_run', 'poll', 'reset']
-        if action not in ALLOWED_ACTIONS:
-            return print('Action must be one of the following values: {actions}'.format(actions=ALLOWED_ACTIONS))
-
-        if action == 'run':
-            try:
-                self.trex_client.start(ports = port_handle)
-            except Exception as e:
-                return print('Could not start traffic: %s' % e)
-
-        elif action == 'stop':
-            try:
-                self.trex_client.stop(ports = port_handle)
-            except Exception as e:
-                return print('Could not stop traffic: %s' % e)
-
-        elif action == 'clear_stats':
-            try:
-                self.trex_client.clear_stats(ports = port_handle)
-            except Exception as e:
-                return print('Could not clear stats: %s' % e)
-
-        try:
-            is_traffic_active = self.trex_client.is_traffic_active(ports = port_handle)
-        except Exception as e:
-            return 'Unable to determine ports status: %s' % e
-        
-        return HLT_OK(stopped = not is_traffic_active)
-
-    def traffic_stats(self, **user_kwargs):
+        return self._htl.traffic_control(**user_kwargs)
+    
+    def interface_config(self, port_handle, mode='config'):
         # TODO
-        if not self.trex_client:
-            #return HLT_ERR('Connect first')
-            return print('Connect first')
-        kwargs = self._merge_kwargs(traffic_stats_kwargs, user_kwargs)
-        mode = kwargs['mode']
-        port_handle = kwargs['port_handle']
-        if type(port_handle) is not list:
-            port_handle = [port_handle]
-        ALLOWED_MODES = ['aggregate', 'streams', 'all']
-        if mode not in ALLOWED_MODES:
-            return print("'mode' must be one of the following values: %s" % ALLOWED_MODES)
-        hlt_stats_dict = dict([(port, {}) for port in port_handle])
-        ports_speed = {}
-        for port_id in port_handle:
-            ports_speed[port_id] = self.trex_client.ports[port_id].get_speed_bps()
-
-        try:
-            stats = self.trex_client.get_stats(port_handle)
-            if mode in ('all', 'aggregate'):
-                for port_id in port_handle:
-                    port_stats = stats[port_id]
-                    if port_id.is_integer():
-                        hlt_stats_dict[port_id]['aggregate'] = {
-                                'tx': {
-                                    'pkt_bit_rate':    port_stats.get('tx_bps', 0),
-                                    'pkt_byte_count':  port_stats.get('obytes', 0),
-                                    'pkt_count':       port_stats.get('opackets', 0),
-                                    'pkt_rate':        port_stats.get('tx_pps', 0),
-                                    'total_pkt_bytes': port_stats.get('obytes', 0),
-                                    'total_pkt_rate':  port_stats.get('tx_pps', 0),
-                                    'total_pkts':      port_stats.get('opackets', 0),
-                                    },
-                                'rx': {
-                                    'pkt_bit_rate':    port_stats.get('rx_bps', 0),
-                                    'pkt_byte_count':  port_stats.get('ibytes', 0),
-                                    'pkt_count':       port_stats.get('ipackets', 0),
-                                    'pkt_rate':        port_stats.get('rx_pps', 0),
-                                    'total_pkt_bytes': port_stats.get('ibytes', 0),
-                                    'total_pkt_rate':  port_stats.get('rx_pps', 0),
-                                    'total_pkts':      port_stats.get('ipackets', 0),
-                                    }
-                                }
-            if mode in ('all', 'streams'):
-                for pg_id, pg_stats in stats['flow_stats'].items():
-                    try:
-                        pg_id = int(pg_id)
-                    except:
-                        continue
-                    for port_id in port_handle:
-                        if 'stream' not in hlt_stats_dict[port_id]:
-                            hlt_stats_dict[port_id]['stream'] = {}
-                        hlt_stats_dict[port_id]['stream'][pg_id] = {
-                                'tx': {
-                                    'total_pkts':           pg_stats['tx_pkts'].get(port_id, 0),
-                                    'total_pkt_bytes':      pg_stats['tx_bytes'].get(port_id, 0),
-                                    'total_pkts_bytes':     pg_stats['tx_bytes'].get(port_id, 0),
-                                    'total_pkt_bit_rate':   pg_stats['tx_bps'].get(port_id, 0),
-                                    'total_pkt_rate':       pg_stats['tx_pps'].get(port_id, 0),
-                                    'line_rate_percentage': pg_stats['tx_bps_l1'].get(port_id, 0) * 100.0 / ports_speed[port_id] if ports_speed[port_id] else 0,
-                                    },
-                                'rx': {
-                                    'total_pkts':           pg_stats['rx_pkts'].get(port_id, 0),
-                                    'total_pkt_bytes':      pg_stats['rx_bytes'].get(port_id, 0),
-                                    'total_pkts_bytes':     pg_stats['rx_bytes'].get(port_id, 0),
-                                    'total_pkt_bit_rate':   pg_stats['rx_bps'].get(port_id, 0),
-                                    'total_pkt_rate':       pg_stats['rx_pps'].get(port_id, 0),
-                                    'line_rate_percentage': pg_stats['rx_bps_l1'].get(port_id, 0) * 100.0 / ports_speed[port_id] if ports_speed[port_id] else 0,
-                                    },
-                                }
-        except Exception as e:
-            return print('Could not retrieve stats: %s' % (e))
-        return HLT_OK(hlt_stats_dict)
+        pass
+    
+    def traffic_stats(self, **user_kwargs):
+        return self._htl.traffic_stats(**user_kwargs)
 
     # timeout = maximal time to wait
     def wait_on_traffic(self, port_handle = None, timeout = None):
-        try:
-            self.trex_client.wait_on_traffic(port_handle, timeout)
-        except Exception as e:
-            print('Unable to run wait_on_traffic: %s' % e)
+        return self._htl.wait_on_traffic(port_handle=port_handle, timeout=timeout)
 
+
+
+
+## Logging ################################################################################
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+log.setLevel(logging.DEBUG)
+###########################################################################################
+
+devices = {}
+
+class Variables():
+    '''
+    This Class is to have all the variables initialized and to be called all over the script.
+    With this we can avoid using global variables
+    '''
+    dev_list = []
+    host_list = []
+    dut1_intf1_list = []
+    dut1_intf2_list = []
+    dut1_intf3_list = []
+    dut1_intf4_list = []
+    dut1_intf5_list = []
+    dut1_intf6_list = []
+    dut1_intf7_list = []
+    dut2_intf1_list = []
+    dut2_intf2_list = []
+    dut2_intf3_list = []
+    dut2_intf4_list = []
+    dut2_intf5_list = []
+    dut3_intf1_list = []
+    dut3_intf2_list = []
+    dut3_intf3_list = []
+    dut3_intf4_list = []
+    dut3_intf5_list = []
+    dut3_intf6_list = []
+    dut3_intf7_list = []
+    dut4_intf1_list = []
+    ixia_intf1 = []
+    ixia_intf2 = []
+
+def main():
+    devices['trex'] = TrexAPIWrapper()
+
+    # connect to TRex
+    devices['trex'].connect(device="", port_list=[])
+
+
+    log.info(banner("CLear stats on trex port connected to uut2"))
+    devices['trex'].traffic_control(port_handle = Variables.ixia_intf1, action = 'clear_stats') 
+
+    log.info(banner("Start traffic on trex port connected to uut2"))
+    devices['trex'].traffic_control(action='run',port_handle=Variables.ixia_intf1)
+
+    log.info("sleep for 20")
+    time.sleep(20)
+
+    log.info(banner("Stop traffic on trex port connected to uut2"))
+    devices['trex'].traffic_control(action='stop',port_handle=Variables.ixia_intf1)
+
+    log.info("sleep for 20")
+    time.sleep(20)
+
+    log.info(banner("Traffic stats on Trex ports connected to UUT1 and uut2"))
+    ix1Stat = devices['trex'].traffic_stats(port_handle=Variables.ixia_intf1, mode='aggregate')
+    log.debug(ix1Stat)
+    time.sleep(5)
+    ix2Stat = devices['trex'].traffic_stats(port_handle=Variables.ixia_intf2, mode='aggregate')
+    log.debug(ix2Stat)
+
+    log.info(banner("Checking counters connected on Trex ports connected to uut2"))
+    ix1TxPckt = int(ix1Stat[Variables.ixia_intf1]['aggregate']['tx']['total_pkts'])
+    log.debug(ix1TxPckt)
+    ix2RxPckt = int(ix2Stat[Variables.ixia_intf2]['aggregate']['rx']['total_pkts'])
+    log.debug(ix2RxPckt)
+
+    log.info ("Traffic tx pkt count is "+ str(ix1TxPckt))
+    log.info ("Traffic rx pkt count is "+ str(ix2RxPckt))
+
+    # loss_count = (ix1TxPckt - ix2RxPckt) / (int(ratepps))
+
+    # log.info ("Traffic loss in seconds"+ str(loss_count))
+
+if __name__ == "__main__":
+    main()
