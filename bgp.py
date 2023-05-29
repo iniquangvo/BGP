@@ -76,7 +76,7 @@ logging.basicConfig(level=logging.DEBUG)
 log.setLevel(logging.DEBUG)
 ###########################################################################################
 class ixia_configurations():
-    def assign_ip_to_ixia_interfaces(self,devices):
+
         
 
     def ixia_BGP_config(self, devices):       
@@ -104,9 +104,9 @@ class ixia_configurations():
                 arp_send_req=arp_req,
                 src_mac_addr=src_mac_in_ixia2,
                 netmask=loop_mask,
-                data_integrity= arp_req, 
-				integrity_signature= integrity_signature, 
-				integrity_signature_offset=integrity_signature_offset, 
+                data_integrity= arp_req,
+                integrity_signature= integrity_signature,
+                integrity_signature_offset=integrity_signature_offset,
                 phy_mode=phy1_mode,
                 speed_autonegotiation=speed_autonegotiation
         )
@@ -201,9 +201,9 @@ class ixia_configurations():
                 arp_send_req=arp_req,
                 src_mac_addr=src_mac_in_ixia2,
                 netmask=loop_mask,
-                data_integrity= arp_req, 
-				integrity_signature= integrity_signature, 
-				integrity_signature_offset=integrity_signature_offset, 
+                data_integrity= arp_req,
+                integrity_signature= integrity_signature,
+                integrity_signature_offset=integrity_signature_offset,
                 phy_mode=phy1_mode,
                 speed_autonegotiation=speed_autonegotiation
         )
@@ -273,7 +273,7 @@ class ixia_ipv6_traffic():
                 ipv6_prefix_length=ipv6_prefix_length,
                 data_integrity= arp_req,
                 integrity_signature= integrity_signature,
-				integrity_signature_offset=integrity_signature_offset,
+                integrity_signature_offset=integrity_signature_offset,
                 phy_mode=phy1_mode,
                 speed_autonegotiation=speed_autonegotiation,
         )
@@ -375,7 +375,7 @@ class ixia_ipv6_traffic():
                 ipv6_prefix_length=ipv6_prefix_length,
                 data_integrity= arp_req,
                 integrity_signature= integrity_signature,
-				integrity_signature_offset=integrity_signature_offset,
+                integrity_signature_offset=integrity_signature_offset,
                 speed_autonegotiation=speed_autonegotiation,
                 phy_mode=phy1_mode
         )
@@ -776,7 +776,7 @@ class TC_02_Verfiy_EBGP_Neighbour_by_configuring_neighbor_commands(aetest.Testca
         devices['uut1'].api.unconfigure_bgp_neighbor_remote_as(bgp_as=bgp_as[0],neighbor_as=bgp_as[1],neighbor_address=uut3_vlan30_ip_add)
         log.info(banner("ixia_traffic_L3"))
         log.info(banner('assign_ip_on_interfaces'))
-        ixia_configurations.assign_ip_to_ixia_interfaces(self,devices)
+
         log.info(banner('assign_ixia_configurations'))
         ixia_configurations.ixia_BGP_config(self,devices)
         log.info(banner('clearing_ixia_configurations'))
