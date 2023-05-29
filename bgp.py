@@ -77,32 +77,12 @@ log.setLevel(logging.DEBUG)
 ###########################################################################################
 class ixia_configurations():
     def assign_ip_to_ixia_interfaces(self,devices):
-        devices['uut1'].api.clear_interface_counters(Variables.dut1_intf4_list[0])
-        devices['uut3'].api.clear_interface_counters(Variables.dut3_intf4_list[0])
-        devices['uut1'].api.clear_interface_counters(Variables.dut1_intf5_list[0])
-        devices['uut3'].api.clear_interface_counters(Variables.dut3_intf5_list[0])
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf5_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf5_list)
-        devices['uut1'].api.configure_interface_no_switchport(Variables.dut1_intf5_list[0])
-        devices['uut1'].api.config_ip_on_interface(Variables.dut1_intf5_list[0],ip_address=uut1_intf5_ipadd,mask=loop_mask)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf5_list)
-        devices['uut3'].api.configure_interface_no_switchport(Variables.dut3_intf5_list[0])
-        devices['uut3'].api.config_ip_on_interface(Variables.dut3_intf5_list[0],ip_address=uut3_intf5_ipadd,mask=loop_mask)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf5_list)
-
-        devices['uut1'].api.configure_interface_no_switchport(Variables.dut1_intf4_list[0])
-        devices['uut1'].api.config_ip_on_interface(Variables.dut1_intf4_list[0],ip_address=ixia_inf1_ipadd,mask=loop_mask)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf4_list)
-        devices['uut3'].api.configure_interface_no_switchport(Variables.dut3_intf4_list[0])
-        devices['uut3'].api.config_ip_on_interface(Variables.dut3_intf4_list[0],ip_address=ixia_inf2_ipadd,mask=loop_mask)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf4_list)
-        devices['uut1'].api.configure_routing_ip_route(ip_address=uut1_iproute,mask=loop_mask,dest_add=uut3_intf5_ipadd)
-        devices['uut3'].api.configure_routing_ip_route(ip_address=uut3_iproute,mask=loop_mask,dest_add=uut1_intf5_ipadd)
+        
 
     def ixia_BGP_config(self, devices):       
         
         log.info(banner("Configuring ixia interfaces connected to UUT1"))
-        time.sleep(30)
+
         config_UUT1_interface = devices['ixia'].interface_config(
                 port_handle =Variables.ixia_intf1,
                 autonegotiation=arp_req,
@@ -461,60 +441,17 @@ class CommonSetup(aetest.CommonSetup):
         try:
             devices = {}
             ixia_ports={}
-            uut1 = testbed.devices["uut1"]
-            uut2 = testbed.devices["uut2"]
-            uut3 = testbed.devices["uut3"]
-            uut4 = testbed.devices["uut4"]
+            
             ixia = testbed.devices["ixia"]
             
-            devices = AttrDict(uut1=uut1,uut2=uut2,uut3=uut3,uut4=uut4,ixia=ixia)
-            uut1_intf1=testbed.devices['uut1'].interfaces['uut1_uut2_int1'].name
-            uut1_intf2=testbed.devices['uut1'].interfaces['uut1_uut2_int2'].name
-            uut1_intf3=testbed.devices['uut1'].interfaces['uut1_uut3_int6'].name
-            uut1_intf4=testbed.devices['uut1'].interfaces['uut1_ixia_int6'].name
-            uut1_intf5=testbed.devices['uut1'].interfaces['uut1_uut3_int5'].name
-            uut1_intf6=testbed.devices['uut1'].interfaces['uut1_uut3_int9'].name
-            uut1_intf7=testbed.devices['uut1'].interfaces['uut1_uut3_int8'].name
-            uut2_intf1=testbed.devices['uut2'].interfaces['uut2_uut1_int1'].name
-            uut2_intf2=testbed.devices['uut2'].interfaces['uut2_uut1_int2'].name
-            uut2_intf3=testbed.devices['uut2'].interfaces['uut2_uut3_int3'].name
-            uut2_intf4=testbed.devices['uut2'].interfaces['uut2_uut3_int4'].name
-            uut2_intf5=testbed.devices['uut2'].interfaces['uut2_uut4_int5'].name
-            uut3_intf1=testbed.devices['uut3'].interfaces['uut3_uut2_int3'].name
-            uut3_intf2=testbed.devices['uut3'].interfaces['uut3_uut2_int4'].name
-            uut3_intf3=testbed.devices['uut3'].interfaces['uut3_uut1_int6'].name
-            uut3_intf4=testbed.devices['uut3'].interfaces['uut3_ixia_int6'].name
-            uut3_intf5=testbed.devices['uut3'].interfaces['uut3_uut1_int5'].name
-            uut3_intf6=testbed.devices['uut3'].interfaces['uut3_uut1_int9'].name
-            uut3_intf7=testbed.devices['uut3'].interfaces['uut3_uut1_int8'].name
-            uut4_intf1=testbed.devices['uut4'].interfaces['uut4_uut2_int5'].name
-            Variables.dut1_intf1_list=[uut1_intf1]
-            Variables.dut1_intf2_list=[uut1_intf2]
-            Variables.dut1_intf3_list=[uut1_intf3]
-            Variables.dut1_intf4_list=[uut1_intf4]
-            Variables.dut1_intf5_list=[uut1_intf5]
-            Variables.dut1_intf6_list=[uut1_intf6]
-            Variables.dut1_intf7_list=[uut1_intf7]
-            Variables.dut2_intf1_list=[uut2_intf1]
-            Variables.dut2_intf2_list=[uut2_intf2]
-            Variables.dut2_intf3_list=[uut2_intf3]
-            Variables.dut2_intf4_list=[uut2_intf4]
-            Variables.dut2_intf5_list=[uut2_intf5]
-            Variables.dut3_intf1_list=[uut3_intf1]
-            Variables.dut3_intf2_list=[uut3_intf2]
-            Variables.dut3_intf3_list=[uut3_intf3]
-            Variables.dut3_intf4_list=[uut3_intf4]
-            Variables.dut3_intf5_list=[uut3_intf5]
-            Variables.dut3_intf6_list=[uut3_intf6]
-            Variables.dut3_intf7_list=[uut3_intf7]
-            Variables.dut4_intf1_list=[uut4_intf1]
+            devices = AttrDict(ixia=ixia)
+            
 
-            ixia_ports["ixia_intf1"] = devices.ixia.interfaces['ixia_uut1_int6'].name
-            ixia_ports["ixia_intf1"] = ('1/' + ixia_ports["ixia_intf1"])
-            ixia_ports["ixia_intf2"] = devices.ixia.interfaces['ixia_uut3_int6'].name
-            ixia_ports["ixia_intf2"] = ('1/' + ixia_ports["ixia_intf2"])
+            ixia_ports["ixia_intf1"] = devices.ixia.interfaces['ixia_uut1_int6']
+            
+
             Variables.ixia_intf1=ixia_ports["ixia_intf1"]
-            Variables.ixia_intf2= ixia_ports["ixia_intf2"]
+
             self.parent.parameters.update(devices=devices)
             log.info("Common Setup Completed Successfully")
             self.passed()
@@ -526,157 +463,25 @@ class CommonSetup(aetest.CommonSetup):
     @aetest.subsection
     def connect_to_devices(self, steps, devices):
         """Discover and Connect the devices from testbed file"""
-        with steps.start("Connect uut") as step:
+        with steps.start("Connect trex") as step:
+            log.info(f"list Devices: {devices}")
             for device in devices.keys():
                 log.info(f"Connecting to Device: {device}")
+                log.info(f"Device info: {devices[device]}")
                 try:
-                    devices[device].connect()
+                    con=devices[device].connect()
+                    log.info("this is trex connected:",con)
                     log.info(f"Connection to {device} Successful")
                 except Exception as e:
                     log.info(f"Connection to {device} Unsuccessful"+str(e))
                     step.failed(f'{str(type(e))} : {str(e)}')
-        devices['uut2'].api.unshut_interface(interface)
-        devices['uut2'].api.config_ip_on_interface(interface, Ip_address, IP_Subnet_Mask)
-        devices['uut2'].api.configure_vrf_on_interface(interface, vrf)
-        ping = devices['uut2'].api.verify_ping(address=TFTP_IP, vrf=vrf, expected_max_success_rate=max_success_rate, expected_min_success_rate=min_success_rate, max_time=maximum_time)
-        if ping == True:
-            log.info("tftp server is reachable")
-        else:
-            self.failed("tftp server is not reachable")
+        
 
     @aetest.subsection
     def functional_configuration(self,devices):
 
         log.info(banner("making interfaces no shutdown"))
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf1_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf2_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf3_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf4_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf1_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf2_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf3_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf4_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf5_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf1_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf2_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf3_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf4_list)
-        devices['uut4'].api.configure_interfaces_unshutdown(Variables.dut4_intf1_list)
-        log.info(banner("default the interfaces"))
-        devices['uut1'].api.default_interface(Variables.dut1_intf1_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf2_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf3_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf4_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf1_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf2_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf3_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf4_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf5_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf1_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf2_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf3_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf4_list)
-        devices['uut4'].api.default_interface(Variables.dut4_intf1_list)
-        log.info(banner('Checking the interface protocol status on UUT1'))
-        for intf in Variables.dut1_intf1_list:
-            if devices['uut1'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT1 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT1 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut1_intf2_list:
-            if devices['uut1'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT1 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT1 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut1_intf3_list:
-            if devices['uut1'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT1 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT1 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut1_intf4_list:
-            if devices['uut1'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT1 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT1 interface {} protocol status is down ".format(intf))
         
-        log.info(banner('Checking the interface protocol status on UUT2'))
-        for intf in Variables.dut2_intf1_list:
-            if devices['uut2'].api.verify_interface_state_up(interface=intf):
-                log.info("Stack_UUT2 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("stack_UUT2 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut2_intf2_list:
-            if devices['uut2'].api.verify_interface_state_up(interface=intf):
-                log.info("Stack_UUT2 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("stack_UUT2 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut2_intf3_list:
-            if devices['uut2'].api.verify_interface_state_up(interface=intf):
-                log.info("Stack_UUT2 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("stack_UUT2 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut2_intf4_list:
-            if devices['uut2'].api.verify_interface_state_up(interface=intf):
-                log.info("Stack_UUT2 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("stack_UUT2 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut2_intf5_list:
-            if devices['uut2'].api.verify_interface_state_up(interface=intf):
-                log.info("Stack_UUT2 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("stack_UUT2 interface {} protocol status is down ".format(intf))
-        log.info(banner('Checking the interface protocol status on UUT3'))
-        for intf in Variables.dut3_intf1_list:
-            if devices['uut3'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT3 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT3 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut3_intf2_list:
-            if devices['uut3'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT3 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT3 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut3_intf3_list:
-            if devices['uut3'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT3 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT3 interface {} protocol status is down ".format(intf))
-        for intf in Variables.dut3_intf4_list:
-            if devices['uut3'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT3 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT3 interface {} protocol status is down ".format(intf))
-        log.info(banner('Checking the interface protocol status on UUT4'))
-        for intf in Variables.dut4_intf1_list:
-            if devices['uut4'].api.verify_interface_state_up(interface=intf):
-                log.info("UUT4 interface {} protocol status is up ".format(intf))
-            else:
-                self.failed("UUT4 interface {} protocol status is down ".format(intf))
-        log.info(banner("cpu_utilization"))
-        output1=devices['uut1'].parse('show processes cpu platform sorted')
-        uut1_util_five_secs=int(output1['cpu_utilization']['cpu_util_five_secs'][:-1])
-        if uut1_util_five_secs<40:
-            log.info('CPU Utilisation is less than 40%')
-        else:
-            self.failed('CPU Utilisation is more than 40%')
-        output2=devices['uut2'].parse('show processes cpu platform sorted')
-        uut2_util_five_secs=int(output2['cpu_utilization']['cpu_util_five_secs'][:-1])
-        if uut2_util_five_secs<40:
-            log.info('CPU Utilisation is less than 40%')
-        else:
-            self.failed('CPU Utilisation is more than 40%')
-        output3=devices['uut3'].parse('show processes cpu platform sorted')
-        uut3_util_five_secs=int(output3['cpu_utilization']['cpu_util_five_secs'][:-1])
-        if uut3_util_five_secs<40:
-            log.info('CPU Utilisation is less than 40%')
-        else:
-            self.failed('CPU Utilisation is more than 40%')
-        output4=devices['uut4'].parse('show processes cpu platform sorted')
-        uut4_util_five_secs=int(output4['cpu_utilization']['cpu_util_five_secs'][:-1])
-        if uut4_util_five_secs<40:
-            log.info('CPU Utilisation is less than 40%')
-        else:
-            self.failed('CPU Utilisation is more than 40%')
 
 class TC_01_to_verify_sync_between_bgp_andg_igp(aetest.Testcase):
 
@@ -687,395 +492,22 @@ class TC_01_to_verify_sync_between_bgp_andg_igp(aetest.Testcase):
 
     @aetest.test
     def tc_01_verify_sync_between_bgp_andg_igp(self,devices):
-        log.info("Clear the logging buffer")
-        devices['uut1'].api.clear_logging(device=devices['uut1'])
-        devices['uut2'].api.clear_logging(device=devices['uut2'])
-        devices['uut3'].api.clear_logging(device=devices['uut3'])
-        devices['uut4'].api.clear_logging(device=devices['uut4'])
-        log.info(banner("configure_interfaces_shutdown"))
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf1_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf2_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf3_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf4_list)
-        devices['uut1'].api.configure_interfaces_unshutdown(Variables.dut1_intf5_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf1_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf2_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf3_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf4_list)
-        devices['uut2'].api.configure_interfaces_unshutdown(Variables.dut2_intf5_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf1_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf2_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf3_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf4_list)
-        devices['uut3'].api.configure_interfaces_unshutdown(Variables.dut3_intf5_list)
-        devices['uut4'].api.configure_interfaces_unshutdown(Variables.dut4_intf1_list)
-        log.info(banner("configure_vtp_mode"))
-        devices['uut1'].api.configure_vtp_mode(mode1)
-        devices['uut2'].api.configure_vtp_mode(mode1)
-        devices['uut3'].api.configure_vtp_mode(mode1)
-        devices['uut4'].api.configure_vtp_mode(mode1)
-        log.info(banner("enable the ip and ipv6 routing"))
-        for count in range(1, 5):
-            devices[f'uut{count}'].api.enable_ipv6_unicast_routing()
-            devices[f'uut{count}'].api.enable_ip_routing()
-        log.info(banner("loopback_interface"))
-        devices['uut1'].api.config_ip_on_interface(intf_Loopback_num,ip_address=uut1_Loopback_ip_add,mask=loop_mask)
-        devices['uut2'].api.config_ip_on_interface(intf_Loopback_num,ip_address=uut2_Loopback_ip_add,mask=loop_mask)
-        devices['uut3'].api.config_ip_on_interface(intf_Loopback_num,ip_address=uut3_Loopback_ip_add,mask=loop_mask)
-        devices['uut4'].api.config_ip_on_interface(intf_Loopback_num,ip_address=uut4_Loopback_ip_add,mask=loop_mask)
-        log.info(banner("assign_ip_on_vlan"))
-        devices['uut1'].api.config_vlan(uut_vlan_id[0])
-        devices['uut1'].api.config_ip_on_vlan(uut_vlan_id[0],ipv4_address=uut1_vlan20_ip_add,subnetmask=loop_mask)
-        devices['uut1'].api.configure_interfaces_unshutdown(uut_vlan_id1)
-        devices['uut1'].api.config_vlan(uut_vlan_id[1])
-        devices['uut1'].api.config_ip_on_vlan(uut_vlan_id[1],ipv4_address=uut1_vlan30_ip_add,subnetmask=loop_mask)
-        devices['uut1'].api.configure_interfaces_unshutdown(uut_vlan_id2)
-        devices['uut2'].api.config_vlan(uut_vlan_id[0])
-        devices['uut2'].api.config_ip_on_vlan(uut_vlan_id[0],ipv4_address=uut2_vlan20_ip_add,subnetmask=loop_mask)
-        devices['uut2'].api.configure_interfaces_unshutdown(uut_vlan_id1)
-        devices['uut2'].api.config_vlan(uut_vlan_id[2])
-        devices['uut2'].api.config_ip_on_vlan(uut_vlan_id[2],ipv4_address=uut2_vlan40_ip_add,subnetmask=loop_mask)
-        devices['uut2'].api.configure_interfaces_unshutdown(uut_vlan_id3)
-        devices['uut3'].api.config_vlan(uut_vlan_id[1])
-        devices['uut3'].api.config_ip_on_vlan(uut_vlan_id[1],ipv4_address=uut3_vlan30_ip_add,subnetmask=loop_mask)
-        devices['uut3'].api.configure_interfaces_unshutdown(uut_vlan_id2)
-        devices['uut4'].api.config_vlan(uut_vlan_id[2])
-        devices['uut4'].api.config_ip_on_vlan(uut_vlan_id[2],ipv4_address=uut4_vlan40_ip_add,subnetmask=loop_mask)
-        devices['uut4'].api.configure_interfaces_unshutdown(uut_vlan_id3)
-        log.info(banner("switchport_mode_on_interfaces"))
-        devices['uut1'].api.configure_interface_switchport_mode(Variables.dut1_intf1_list[0],mode=mode11)
-        devices['uut1'].api.configure_interface_switchport_access_vlan(Variables.dut1_intf1_list[0],uut_vlan_id[0])
-        devices['uut1'].api.configure_interface_switchport_mode(Variables.dut1_intf3_list[0],mode=mode11)
-        devices['uut1'].api.configure_interface_switchport_access_vlan(Variables.dut1_intf3_list[0],uut_vlan_id[1])
-        devices['uut2'].api.configure_interface_switchport_mode(Variables.dut2_intf1_list[0],mode=mode11)
-        devices['uut2'].api.configure_interface_switchport_access_vlan(Variables.dut2_intf1_list[0],uut_vlan_id[0])
-        devices['uut2'].api.configure_interface_switchport_mode(Variables.dut2_intf5_list[0],mode=mode11)
-        devices['uut2'].api.configure_interface_switchport_access_vlan(Variables.dut2_intf5_list[0],uut_vlan_id[2])
-        devices['uut3'].api.configure_interface_switchport_mode(Variables.dut3_intf3_list[0],mode=mode11)
-        devices['uut3'].api.configure_interface_switchport_access_vlan(Variables.dut3_intf3_list[0],uut_vlan_id[1])
-        devices['uut4'].api.configure_interface_switchport_mode(Variables.dut4_intf1_list[0],mode=mode11)
-        devices['uut4'].api.configure_interface_switchport_access_vlan(Variables.dut4_intf1_list[0],uut_vlan_id[2])
-        log.info(banner("configure_bgp_router_id"))
-        devices['uut1'].api.unconfigure_router_bgp_synchronization(bgp_as[0])
-        devices['uut2'].api.unconfigure_router_bgp_synchronization(bgp_as[0])
-        devices['uut3'].api.unconfigure_router_bgp_synchronization(bgp_as[1])
-        devices['uut4'].api.unconfigure_router_bgp_synchronization(bgp_as[2])
-        devices['uut1'].api.configure_bgp_log_neighbor_changes(bgp_as[0])
-        devices['uut2'].api.configure_bgp_log_neighbor_changes(bgp_as[0])
-        devices['uut3'].api.configure_bgp_log_neighbor_changes(bgp_as[1])
-        devices['uut4'].api.configure_bgp_log_neighbor_changes(bgp_as[2])
-        devices['uut1'].api.unconfigure_bgp_auto_summary(bgp_as[0])
-        devices['uut2'].api.unconfigure_bgp_auto_summary(bgp_as[0])
-        devices['uut3'].api.unconfigure_bgp_auto_summary(bgp_as[1])
-        devices['uut4'].api.unconfigure_bgp_auto_summary(bgp_as[2])
-        log.info(banner("configure_bgp_neighbor"))
-        devices['uut1'].api.configure_bgp_neighbor(bgp_as=bgp_as[0],neighbor_as=bgp_as[0],neighbor_address=uut2_vlan20_ip_add)
-        devices['uut1'].api.configure_bgp_neighbor(bgp_as=bgp_as[0],neighbor_as=bgp_as[1],neighbor_address=uut3_vlan30_ip_add)
-        devices['uut2'].api.configure_bgp_neighbor(bgp_as=bgp_as[0],neighbor_as=bgp_as[0],neighbor_address=uut1_vlan20_ip_add)
-        devices['uut2'].api.configure_bgp_neighbor(bgp_as=bgp_as[0],neighbor_as=bgp_as[2],neighbor_address=uut4_vlan40_ip_add)
-        devices['uut3'].api.configure_bgp_neighbor(bgp_as=bgp_as[1],neighbor_as=bgp_as[0],neighbor_address=uut1_vlan30_ip_add)
-        devices['uut4'].api.configure_bgp_neighbor(bgp_as=bgp_as[2],neighbor_as=bgp_as[0],neighbor_address=uut2_vlan40_ip_add)
-        log.info(banner("configure_bgp_address_advertisement"))
-        devices['uut1'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[0], mask=loop_mask)
-        devices['uut1'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[1], mask=loop_mask)
-        devices['uut1'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[2], mask=loop_mask)
-        devices['uut2'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[3], mask=loop_mask)
-        devices['uut2'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[1], mask=loop_mask)
-        devices['uut2'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[0], address_family=address_family, ip_address=network_ip_add[5], mask=loop_mask)
-        devices['uut3'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[1], address_family=address_family, ip_address=network_ip_add[4], mask=loop_mask)
-        devices['uut3'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[1], address_family=address_family, ip_address=network_ip_add[2], mask=loop_mask)
-        devices['uut4'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[2], address_family=address_family, ip_address=network_ip_add[6], mask=loop_mask)
-        devices['uut4'].api.configure_bgp_address_advertisement(bgp_as=bgp_as[2], address_family=address_family, ip_address=network_ip_add[5], mask=loop_mask)
-        log.info(banner("Verfiy ping check from dut1"))
-        log.info(banner("verying_ping_check"))
-        time.sleep(60)
-        if devices['uut1'].api.verify_ping(uut2_vlan40_ip_add):
-            log.info(f"the ping verfication for {uut2_vlan40_ip_add} is passed on dut1")
-        else:
-            self.failed("1 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut4_vlan40_ip_add):
-            log.info(f"the ping verfication for {uut4_vlan40_ip_add} is passed on dut1")
-        else:
-            self.failed("2 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut3_vlan30_ip_add):
-            log.info(f"the ping verfication for {uut3_vlan30_ip_add} is passed on dut1")
-        else:
-            self.failed("3 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut2_vlan20_ip_add):
-            log.info(f"the ping verfication for {uut2_vlan20_ip_add} is passed on dut1")
-        else:
-            self.failed("4 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut2_Loopback_ip_add):
-            log.info(f"the ping verfication for {uut2_Loopback_ip_add} is passed on dut1")
-        else:
-            self.failed("5 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut3_Loopback_ip_add):
-            log.info(f"the ping verfication for {uut3_Loopback_ip_add} is passed on dut1")
-        else:
-            self.failedr("6 ping verfication failed in dut1")
-        if devices['uut1'].api.verify_ping(uut4_Loopback_ip_add):
-            log.info(f"the ping verfication for {uut4_Loopback_ip_add} is passed on dut1")
-        else:
-            self.failed("7 ping verfication failed in dut1")
-        log.info(banner("show_ip_bgp_check"))
-        try:
-            devices['uut1'].parse(f"show ip bgp")
-        except Exception as error:
-            if 'Parser Output is empty' in str(error):
-                pass
-        try:
-            devices['uut2'].parse(f"show ip bgp")
-        except Exception as error:
-            if 'Parser Output is empty' in str(error):
-                pass
-        try:
-            devices['uut3'].parse(f"show ip bgp")
-        except Exception as error:
-            if 'Parser Output is empty' in str(error):
-                pass
-        try:
-            devices['uut4'].parse(f"show ip bgp")
-        except Exception as error:
-            if 'Parser Output is empty' in str(error):
-                pass
-        log.info(banner("verify_show_command"))
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {route}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes1]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[1]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes2]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[3]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes3]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[2]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes4]['index'][index1]['originator']==uut3_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[4]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes5]['index'][index1]['originator']==uut3_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[5]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes6]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut1'].parse(f"show ip bgp {network_ip_add[6]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes7]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {route}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes1]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[1]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes2]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[3]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes3]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[2]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes4]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[4]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes5]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[5]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes6]['index'][index1]['originator']==uut4_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut2'].parse(f"show ip bgp {network_ip_add[6]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes7]['index'][index1]['originator']==uut4_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut3'].parse(f"show ip bgp {route}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes1]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut3'].parse(f"show ip bgp {network_ip_add[1]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes2]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut3'].parse(f"show ip bgp {network_ip_add[2]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes4]['index'][index1]['originator']==uut1_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut3'].parse(f"show ip bgp {network_ip_add[4]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes5]['index'][index1]['originator']==uut3_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut4'].parse(f"show ip bgp {network_ip_add[1]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes2]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut4'].parse(f"show ip bgp {network_ip_add[3]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes3]['index'][index1]['originator']==uut2_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
-        try:
-            out=devices['uut4'].parse(f"show ip bgp {network_ip_add[6]}")
-            if (out['instance']['default']['vrf']['default']['address_family']['']['prefixes'][prefixes7]['index'][index1]['originator']==uut4_Loopback_ip_add):
-                log.info("passed the show ip bgp route command check")
-            else:
-                self.failed("failed the sh ip bgp route check")
-        except Exception as e:
-            self.failed("bgp route not present or parser output is empty", goto=['common_cleanup'])
+        
         log.info(banner("ixia_traffic_L3"))
         log.info(banner('assign_ip_on_interfaces'))
-        ixia_configurations.assign_ip_to_ixia_interfaces(self,devices)
+
         log.info(banner('assign_ixia_configurations'))
-        ixia_configurations.ixia_BGP_config(self,devices)
+        trex_conf=ixia_configurations.ixia_BGP_config(self,devices)
+        log.info('assign_ixia_configurations',trex_conf)
         log.info(banner('clearing_ixia_configurations'))
         ixia_configurations.clear_ixia_configs(self,devices)
-        log.info(banner("enable_synchronization"))
-        devices['uut1'].api.configure_router_bgp_synchronization(system=system1)
-        devices['uut2'].api.configure_router_bgp_synchronization(system=system1)
-        devices['uut3'].api.configure_router_bgp_synchronization(system=system3)
-        devices['uut4'].api.configure_router_bgp_synchronization(system=system4)
-        log.info(banner("checking running-config of BGP"))
-        devices['uut1'].api.get_show_output_include(command="show running-config", filter="bgp")
-        devices['uut2'].api.get_show_output_include(command="show running-config", filter="bgp")
-        devices['uut3'].api.get_show_output_include(command="show running-config", filter="bgp")
-        devices['uut4'].api.get_show_output_include(command="show running-config", filter="bgp")
-        log.info(banner("clear ip bgp"))
-        devices['uut1'].api.clear_ip_bgp()
-        devices['uut2'].api.clear_ip_bgp()
-        devices['uut3'].api.clear_ip_bgp()
-        devices['uut4'].api.clear_ip_bgp()
-        log.info(banner("show run include ip checks"))
-        for count in range(1, 5):
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[0])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[1])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[2])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[4])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[3])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[3])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[5])
-            devices[f'uut{count}'].api.get_show_output_include(command="show ip route", filter=network_ip_add[6])
+        log.info(banner("pass all the trex setup"))
+        
 
     @aetest.cleanup
     def cleanup(self,devices):
         log.info("default the interfaces which are used")
-        devices['uut1'].api.default_interface(Variables.dut1_intf1_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf2_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf3_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf4_list)
-        devices['uut1'].api.default_interface(Variables.dut1_intf5_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf1_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf2_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf3_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf4_list)
-        devices['uut2'].api.default_interface(Variables.dut2_intf5_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf1_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf2_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf3_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf4_list)
-        devices['uut3'].api.default_interface(Variables.dut3_intf5_list)
-        devices['uut4'].api.default_interface(Variables.dut4_intf1_list)
-        log.info("Removing vlans which are configured")
-        devices['uut1'].api.remove_virtual_interface(uut_vlan_id1)
-        devices['uut1'].api.remove_virtual_interface(uut_vlan_id2)
-        devices['uut2'].api.remove_virtual_interface(uut_vlan_id1)
-        devices['uut2'].api.remove_virtual_interface(uut_vlan_id3)
-        devices['uut3'].api.remove_virtual_interface(uut_vlan_id2)
-        devices['uut4'].api.remove_virtual_interface(uut_vlan_id3)
-        log.info("removing loopback interfaces which are configured")
-        devices['uut1'].api.remove_virtual_interface(remove_loopback_intf)
-        devices['uut2'].api.remove_virtual_interface(remove_loopback_intf)
-        devices['uut3'].api.remove_virtual_interface(remove_loopback_intf)
-        devices['uut4'].api.remove_virtual_interface(remove_loopback_intf)
-        log.info("removing bgp routers which are configured")
-        devices['uut1'].api.remove_bgp_configuration(bgp_as[0])
-        devices['uut2'].api.remove_bgp_configuration(bgp_as[0])
-        devices['uut3'].api.remove_bgp_configuration(bgp_as[1])
-        devices['uut4'].api.remove_bgp_configuration(bgp_as[2])
+        
 
 class TC_02_Verfiy_EBGP_Neighbour_by_configuring_neighbor_commands(aetest.Testcase):
 

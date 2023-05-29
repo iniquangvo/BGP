@@ -144,18 +144,18 @@ devices:
                 post_clean: |
                      license grace-period
       
-    ixia:
-        type: 'ixia'
+    trex:
+        type: 'trex'
         alias: 'ixia'
+        os: 'linux'
         connections:
             defaults:
-                class: hltapi.IxiaHltApiConnection
-            ixia:
-                protocol: hltapi
-                ip: 172.25.56.146
-                tcl_server: 172.25.56.146
-                ixnetwork_tcl_server: 172.25.56.81
-                reset: 1
+                class: trex_hltapi.TRexHltApiConnection
+            hltapi:
+                device: 10.20.2.101
+                username: "junior"
+                break_locks: true
+                raise_errors: true   
             
 topology:                        
         stack3-nyq-PE1:
@@ -250,17 +250,20 @@ topology:
                               alias: uut3_uut1_int8
                               link: link-6
                               type: ethernet
-                        
-                    
         ixia:
                 interfaces:
-                        5/1:
-                            alias: ixia_uut3_int6
-                            link: link-6
-                            type: ethernet
-                        5/12:
+
+                        0:
                             alias: ixia_uut1_int6
                             link: link-6
-                            type: ethernet 
+                            type: ethernet
+                            ipv4: 10.20.2.101
+                            link_type: physical
+                            type: ethernet
+
+
+
+                    
+
 
          
